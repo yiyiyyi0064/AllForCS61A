@@ -28,6 +28,7 @@ def list_partition(n,m):
         if n==m:
            yield str(m)
         for p in list_partition(n-m,m):
+           #先要把list（generator）中的第一个数给他执行完整 再执行下一个
            yield p+'+'+str(m)
         yield from list_partition(n,m-1)
         #recursive 想要recursive后所有的结果        

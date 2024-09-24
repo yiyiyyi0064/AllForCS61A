@@ -9,7 +9,16 @@ def hailstone(n):
     1
     """
     "*** YOUR CODE HERE ***"
-
+    if n==1:
+        for _ in range(111):
+            yield 1
+    if n%2==0:
+        yield n
+        x=n//2
+    elif n!=1:
+        yield n
+        x=3*n+1
+    yield from hailstone(x)
 
 def merge(a, b):
     """Q2:
@@ -24,7 +33,15 @@ def merge(a, b):
     [2, 3, 5, 7, 8, 9, 11, 13, 14, 15]
     """
     "*** YOUR CODE HERE ***"
-
+    x,y=next(a),next(b)
+    if x==y:
+        yield x
+        yield next(b)
+    else:
+        yield x
+        yield y
+    yield from merge(a,b)
+                
 
 def yield_paths(t, value):
     """Q4: Yields all possible paths from the root of t to a node with the label
@@ -61,10 +78,12 @@ def yield_paths(t, value):
     [[0, 2], [0, 2, 1, 2]]
     """
     if label(t) == value:
-        yield ____
+        yield [value] 
+        #这里t可能不是leaf 而是其中一个node 特别注意看是否只会返回目标值!
+        #yield 有个奇妙之处在于 不会直接结束整个进程而是stop 故会继续往下遍历(如果只是其中一个node)
     for b in branches(t):
-        for ____ in ____:
-            yield ____
+        for s in yield_paths(b,value):
+            yield [label(t)]+s #还和顺序有关的！！！ 加入list的方式
 
 
 
