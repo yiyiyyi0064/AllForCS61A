@@ -39,3 +39,13 @@ recursive的思想特别重要呀
 Generator
 
 ![image-20240920205223093](C:\Users\yiyiyyi\AppData\Roaming\Typora\typora-user-images\image-20240920205223093.png)
+
+---
+
+**对于list元素的定义与添加方式**
+
+定义： transactions=[]
+
+添加元素：transactions.append() 
+
+（括号内为添加元素）
