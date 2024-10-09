@@ -22,6 +22,7 @@ class Account:
     def __init__(self, account_holder):
         self.balance = 0
         self.holder = account_holder
+        self.num_withdrawl=0
 
     def deposit(self, amount):
         self.balance = self.balance + amount
@@ -39,7 +40,12 @@ class Account:
         """Return the number of years until balance would grow to amount."""
         assert self.balance > 0 and amount > 0 and self.interest > 0
         "*** YOUR CODE HERE ***"
-
+        i=0
+        ret_money=self.balance
+        while ret_money<amount:
+            ret_money+=ret_money*self.interest
+            i+=1
+        return i
 
 class FreeChecking(Account):
     """A bank account that charges for withdrawals, but the first two are free!
@@ -68,6 +74,22 @@ class FreeChecking(Account):
     free_withdrawals = 2
 
     "*** YOUR CODE HERE ***"
+    def withdraw(self, amount):
+        if self.num_withdrawl<FreeChecking.free_withdrawals:
+            self.num_withdrawl+=1
+            if amount > self.balance:
+                return "Insufficient funds"
+            if amount > self.max_withdrawal:
+                return "Can't withdraw that amount"
+            self.balance = self.balance - amount
+        else:
+            self.num_withdrawl+=1 
+            if amount > self.balance-FreeChecking.withdraw_fee:
+                return "Insufficient funds"
+            if amount > self.max_withdrawal:
+                return "Can't withdraw that amount"
+            self.balance=self.balance-amount-FreeChecking.withdraw_fee
+        return self.balance
 
 
 def duplicate_link(s, val):
@@ -87,7 +109,15 @@ def duplicate_link(s, val):
     Link(1, Link(2, Link(2, Link(2, Link(2, Link(3))))))
     """
     "*** YOUR CODE HERE ***"
-
+    if s==Link.empty:
+        return None
+    elif s.first==val:
+        ret=Link(val,s.rest)
+        s.rest=ret
+        #s在全局变量中 是用point来连接各个部分 后续其中一个point改变那么整个sequence也在相应改变
+        duplicate_link(s.rest.rest,val)
+    else:
+        duplicate_link(s.rest,val)
 
 class Link:
     """A linked list.

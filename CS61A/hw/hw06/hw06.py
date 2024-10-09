@@ -48,6 +48,37 @@ class VendingMachine:
     'Here is your soda.'
     """
     "*** YOUR CODE HERE ***"
+    def __init__(self,product,price):
+        self.product=product
+        self.price=price
+        self.stock=0
+        self.balance=0
+    def vend(self):
+        #自己默认使用self
+        if self.stock==0:
+            print('\'Nothing left to vend. Please restock.\'')
+        elif self.balance < self.price:
+            print(f'\'Please add ${self.price-self.balance} more funds.\'')
+        elif self.balance == self.price:
+            self.balance-=self.price
+            self.stock-=1
+            print(f'\'Here is your {self.product}.\'')
+        else:
+            self.balance-=self.price
+            self.stock-=1
+            print(f'\'Here is your {self.product} and ${self.balance} change.\'')
+            self.balance=0
+    def add_funds(self,money):
+        if self.stock==0:
+            print(f'\'Nothing left to vend. Please restock. Here is your ${money}.\'')
+        else:
+            self.balance+=money
+            print(f'\'Current balance: ${self.balance}\'')
+    def restock(self,stock):
+        self.stock+=stock
+        print(f'\'Current {self.product} stock: {self.stock}\'')
+
+
 
 
 def store_digits(n):
