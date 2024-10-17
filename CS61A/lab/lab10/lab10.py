@@ -14,20 +14,22 @@ def calc_eval(exp):
     3
     """
     if isinstance(exp, Pair):
-        operator = ____________ # UPDATE THIS FOR Q2
-        operands = ____________ # UPDATE THIS FOR Q2
+        operator = exp.first # UPDATE THIS FOR Q2
+        operands = exp.rest # UPDATE THIS FOR Q2
         if operator == 'and': # and expressions
             return eval_and(operands)
         elif operator == 'define': # define expressions
             return eval_define(operands)
         else: # Call expressions
-            return calc_apply(___________, ___________) # UPDATE THIS FOR Q2
+            #这句是最重要的 究竟是如何解析整个expr的
+            return calc_apply(calc_eval(operator), operands.map(calc_eval)) # UPDATE THIS FOR Q2
+        #显然仅仅传入operator和operands是远远不够的 需要再对这两个进行处理 确保得到最基本的形式
     elif exp in OPERATORS:   # Looking up procedures
-        return OPERATORS[exp]
+        return OPERATORS[exp] #calc解析operators 最后不是pair只剩一个符号 就会到这里来 返回计算op
     elif isinstance(exp, int) or isinstance(exp, bool):   # Numbers and booleans
         return exp
-    elif _________________: # CHANGE THIS CONDITION FOR Q4
-        return _________________ # UPDATE THIS FOR Q4
+    elif exp in bindings.keys(): # CHANGE THIS CONDITION FOR Q4
+        return bindings[exp] # UPDATE THIS FOR Q4
 
 def calc_apply(op, args):
     return op(args)
@@ -52,6 +54,18 @@ def floor_div(args):
     20
     """
     "*** YOUR CODE HERE ***"
+    #可以直接用while迭代！
+    def multiple_div(exp,value):
+        if exp==nil:
+            #print(value)
+            return value
+        else:
+            value=value//(exp.first)
+            return multiple_div(exp.rest,value)
+    #高阶函数:最后返回的值在mulptiple这里 而没有返回到调用处
+    return multiple_div(args.rest,args.first)
+    
+    
 
 scheme_t = True   # Scheme's #t
 scheme_f = False  # Scheme's #f
@@ -74,6 +88,21 @@ def eval_and(expressions):
     True
     """
     "*** YOUR CODE HERE ***"
+    #没有传入and
+    expr=expressions
+    #其实我只要计算与and并列的pair
+    #有可能 1,2,nil 
+    val=scheme_t
+    while expr!=nil:
+        #退出时还有一个pair
+        #要用is not 如果直接用!= 会导致变成值判断
+        if calc_eval(expr.first) is not scheme_f:
+            #print(calc_eval(expr.first))
+            val=calc_eval(expr.first)
+            expr=expr.rest
+        else:
+            return False
+    return val
 
 bindings = {}
 
@@ -93,6 +122,18 @@ def eval_define(expressions):
     2
     """
     "*** YOUR CODE HERE ***"
+    # symbol expressions(value)
+    symbol=expressions.first
+    #print(symbol)
+    operand=expressions.rest
+    if operand.rest is nil:
+        operand=calc_eval(operand.first)
+    else:
+        #如果有两个pair pair("+", pair(2, nil))and没问题是因为总是调用的first
+        #至少是这样 不会有单独进入pair(2,nil)的情况 
+        operand=calc_eval(operand)
+    bindings[symbol]=operand
+    return symbol
 
 OPERATORS = { "//": floor_div, "+": addition, "-": subtraction, "*": multiplication, "/": division }
 
